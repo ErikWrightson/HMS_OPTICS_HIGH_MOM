@@ -234,13 +234,13 @@ void set_ypfp_yfp_cuts(Int_t nrun=1814,Int_t FileID=-2,Double_t hist_minZ=1.) {
 	vector<vector<vector<Double_t> > > vyfp;
 	vector<vector<vector<Double_t> > > vypfp;
 	vector<vector<vector<TLine*> > > vline;
-	vyfp.resize(11);
-	vypfp.resize(11);
-	vline.resize(11);
-	for  (Int_t nd=0;nd<11;nd++) {
-	vyfp[nd].resize(11);
-	vypfp[nd].resize(11);
-	vline[nd].resize(11);
+	vyfp.resize(9);
+	vypfp.resize(9);
+	vline.resize(9);
+	for  (Int_t nd=0;nd<9;nd++) {
+	vyfp[nd].resize(9);
+	vypfp[nd].resize(9);
+	vline[nd].resize(9);
 	  for  (Int_t nf=0;nf<ndelcut;nf++) {
 	    vyfp[nd][nf].resize(NumFoil);
 	    vypfp[nd][nf].resize(NumFoil);
@@ -290,8 +290,8 @@ void set_ypfp_yfp_cuts(Int_t nrun=1814,Int_t FileID=-2,Double_t hist_minZ=1.) {
 	  vyfp[nyscol][nd][nf]= yfp;
 	  vypfp[nyscol][nd][nf] = ypfp;
 	  vline[nyscol][nd][nf]= new TLine(ypfplo/1000.,yfplo,ypfphi/1000.,yfphi);
-		  vline[nyscol][nd][nf]->SetLineColor(1);
-		  vline[nyscol][nd][nf]->SetLineWidth(3);
+		  vline[nyscol][nd][nf]->SetLineColor(2);
+		  vline[nyscol][nd][nf]->SetLineWidth(2);
 		  //	  cout << " full matrix yfp = " << vyfp[nyscol][nd][nf]<< " ypfp = " << vypfp[nyscol][nd][nf] << endl;
 	//
 	}}} 
@@ -320,36 +320,37 @@ void set_ypfp_yfp_cuts(Int_t nrun=1814,Int_t FileID=-2,Double_t hist_minZ=1.) {
                   histView_Cut->Update();
 		  for  (Int_t nys=0;nys<9;nys++) {
 		  vline[nys][nd][nf]->Draw("same");
-		  TText* ystext = new TText(vypfp[nys][nd][nf]/1000.,AxisRange[nd][1],Form("P%d",nys));
+		  TText* ystext = new TText(vypfp[nys][nd][nf]/1000.,AxisRange[nd][1],Form("P%d",nys));//what is this position
 		  ystext->SetTextColor(2);
 		  ystext->Draw();
 		  }
                   histView_Cut->Update();
-	  fcut.cd();
+		  fcut.cd();
 		  for  (Int_t nys=0;nys<9;nys++) {
-	hname_cut= Form("hYpFpYFp_cut_yscol_%d_nfoil_%d_ndel_%d;1",nys,nf,nd);
-         t=(TCutG*)gROOT->FindObject(hname_cut);
+		    hname_cut= Form("hYpFpYFp_cut_yscol_%d_nfoil_%d_ndel_%d;1",nys,nf,nd);
+		    t=(TCutG*)gROOT->FindObject(hname_cut);
 	 //       if(!t){cout << "No cut  =  " <<hname_cut  << endl;}
- 	if(t) {
-	  //cout << " draw cut = " <<hname_cut<< endl;
-	  fcut.cd();
- 		 t->Draw("same");
-		 t->SetLineColor(1);
-		 //t->Print();
-		 Double_t xcut,ycut;
-                 t->GetPoint(0,xcut,ycut);
-		 TText* ystext = new TText(xcut,ycut,Form("%d",nys));
-		 ystext->Draw();
-                  histView_Cut->Update();
-	 }
+		    if(t) {
+		      //cout << " draw cut = " <<hname_cut<< endl;
+		      fcut.cd();
+		      t->Draw("same");
+		      t->SetLineColor(1);
+		      //t->Print();
+		      Double_t xcut,ycut;
+		      t->GetPoint(0,xcut,ycut);
+		      TText* ystext = new TText(xcut,ycut,Form("%d",nys));
+		      ystext->Draw();
+		      histView_Cut->Update();
+		    }
 		  }
-      cout <<" Action ( 0 ( set cut) , -1 (pick next nd and foil), -10 delete cut) "  << endl;
+		  cout <<" Action ( 0 ( set cut) , -1 (pick next nd and foil), -10 delete cut) "  << endl;
           cin >> nloop ;
 	  if (nloop == -100) return;
-	  if (nloop==-10 || nloop ==0) {
+	  if (!(nloop == -10 || nloop==0 || nloop==-1 || nloop==-100)) continue;//return;
+	  if (nloop==-10 || nloop ==0 ) {
 	   cout << " Which ysieve hole ? " << " yscol = " << yscol << endl;
 	   cin >> yscol;
-	   if (yscol >=11)yscol=0;
+	   if (yscol >=9)yscol=0;
 	      hname_cut= Form("hYpFpYFp_cut_yscol_%d_nfoil_%d_ndel_%d;1",yscol,nf,nd);
 	  }
           if(nloop==-10) {
