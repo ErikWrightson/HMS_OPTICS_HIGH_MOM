@@ -372,7 +372,7 @@ Long64_t nentries = tsimc->GetEntries();
 			       }
 			       // temporary to clean up
 			       if (f_ny !=-1) hXpFpXFp_DelCut[nc][nd]->Fill(xpfp,xfp);
-			       //hXpFpXFp_DelCut[nc][nd]->Fill(xpfp,xfp);
+			       hXpFphXFp_DelCut[nc][nd]->Fill(xpfp,xfp);
                                for  (UInt_t nx=0;nx<9;nx++) {
 			        if (f_ny !=-1 && CutXpFpXFpFlag && xpfp_xfp_cut[nc][nd][nx] && xpfp_xfp_cut[nc][nd][nx]->IsInside(xpfp,xfp)) {
 				hYsXs_DelCut_XpXfpCut[nc][nd][nx]->Fill(ysieve,xsieve);
