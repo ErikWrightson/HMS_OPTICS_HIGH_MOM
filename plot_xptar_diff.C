@@ -337,7 +337,7 @@ Long64_t nentries = FitTree->GetEntries();
 	     }
       Double_t DelCent=(delcut[nd+1]+delcut[nd])/2;
 	  	  canFoilDel[nf][nd]->cd(1);
-		  mgrFoilDel[nf][nd]->SetTitle(Form("Ztar = %4.1f Del = %3.1f SHMS Angle = %4.2f; Y_sieve (cm); Xptar -Xp_true (mr)",ztar_foil[nf],DelCent,CentAngle));
+		  mgrFoilDel[nf][nd]->SetTitle(Form("Ztar = %4.1f Del = %3.1f HMS Angle = %4.2f; Y_sieve (cm); Xptar -Xp_true (mr)",ztar_foil[nf],DelCent,CentAngle));
 	mgrFoilDel[nf][nd]->SetMinimum(-20);
 	mgrFoilDel[nf][nd]->SetMaximum(+20);
 	mgrFoilDel[nf][nd]->Draw("AP");
@@ -362,7 +362,7 @@ Long64_t nentries = FitTree->GetEntries();
       leg[nf]->AddEntry(gXpDiff_XpTrue[nf][nd],Form("Delta = %3.1f",DelCent),"p");
 	    }
 	candel[nf]->cd(1);
-	mgr[nf]->SetTitle(Form("Ztar = %4.1f SHMS Angle = %4.2f; X_sieve (cm); Xptar -Xp_true (mr)",ztar_foil[nf],CentAngle));
+	mgr[nf]->SetTitle(Form("Ztar = %4.1f HMS Angle = %4.2f; X_sieve (cm); Xptar -Xp_true (mr)",ztar_foil[nf],CentAngle));
 	mgr[nf]->SetMinimum(-20);
 	mgr[nf]->SetMaximum(+20);
 	mgr[nf]->Draw("AP");

@@ -271,7 +271,7 @@ Long64_t nentries = FitTree->GetEntries();
       leg[nf]->AddEntry(gYpDiff_YpTrue[nf][nd],Form("Delta = %3.1f",DelCent),"p");
 	    }
 	candel[nf]->cd(1);
-	mgr[nf]->SetTitle(Form("Ztar = %4.1f SHMS Angle = %4.2f; Y_sieve (cm); YPtar -YP_true (mr)",ztar_foil[nf],CentAngle));
+	mgr[nf]->SetTitle(Form("Ztar = %4.1f HMS Angle = %4.2f; Y_sieve (cm); YPtar -YP_true (mr)",ztar_foil[nf],CentAngle));
 	mgr[nf]->SetMinimum(-20);
 	mgr[nf]->SetMaximum(+20);
 	mgr[nf]->Draw("AP");
