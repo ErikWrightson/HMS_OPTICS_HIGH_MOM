@@ -98,7 +98,8 @@ gStyle->SetPalette(1,0);
  //
    TString inputroot;
    TString outputhist;
-   inputroot=Form("ROOTfiles/hms_replay_matrixopt_%s_%d.root",OpticsID.Data(),FileID);
+   //inputroot=Form("ROOTfiles/hms_replay_matrixopt_%s_%d.root",OpticsID.Data(),FileID);
+   inputroot=Form("./ROOTfiles/Analysis/50k/hms_coin_replay_production_%d_-1.root",RunNum);
    outputhist=Form("hist/Optics_%s_%d_hist.root",OpticsID.Data(),FileID);
    cout << " input root = " << inputroot << endl;
  TObjArray HList(0);
@@ -223,6 +224,11 @@ TTree *tsimc = (TTree*) fsimc->Get("T");
    tsimc->SetBranchAddress("H.rb.raster.fr_xbpm_tar",&xbpm_tar);
  Double_t  ybpm_tar;
    tsimc->SetBranchAddress("H.rb.raster.fr_ybpm_tar",&ybpm_tar);
+ Double_t fr_xa;
+   tsimc->SetBranchAddress("H.rb.raster.fr_xa",&fr_xa);
+ Double_t fr_ya;
+   tsimc->SetBranchAddress("H.rb.raster.fr_ya",&fr_ya);
+
 
    // Define histograms
 	TH1F *hxbpm_tar = new TH1F("hxbpm_tar",Form("Run %d ; Xbpm_tar ; Counts",nrun),100,-2.,2.);
@@ -256,15 +262,19 @@ TTree *tsimc = (TTree*) fsimc->Get("T");
 	HList.Add(hYtarYptar);
 	TH2F *hZtarDelta = new TH2F("hZtarDelta",Form("Run %d ; Ztar ; Delta",nrun),100,-35.,25.,100,-10.,10.);
 	HList.Add(hZtarDelta);
+	TH2F *hZtarFrXa = new TH2F("hZtarFrXa",Form("Run %d; Ztar; fr_xa",nrun),100,-0.15,0.15,100,-11,11);
+	HList.Add(hZtarFrXa);
+	TH2F *hZtarFrYa = new TH2F("hZtarFrYa",Form("Run %d; Ztar; fr_ya",nrun),100,-0.15,0.15,100,-11,11);
+	HList.Add(hZtarFrYa);
 	//
-	vector <TH2F*> hYsDelta;
+	vector<TH2F*> hYsDelta;
 	hYsDelta.resize(NumFoil);
-	vector <TH2F*> hXsDelta;
+	vector<TH2F*> hXsDelta;
 	hXsDelta.resize(NumFoil);
-	vector <TH2F*> hYpFpYFp;
+	vector<TH2F*> hYpFpYFp;
 	hYpFpYFp.resize(NumFoil);
-	vector <TH2F*> hXFpYFp;
-	vector <TH2F*> hXpFpXFp;
+	vector<TH2F*> hXFpYFp;
+	vector<TH2F*> hXpFpXFp;
 	hXpFpXFp.resize(NumFoil);
 	hXFpYFp.resize(NumFoil);
 	vector<vector<vector<TH2F*> > > hYsXs_DelCut_YpYfpCut;
@@ -295,33 +305,42 @@ TTree *tsimc = (TTree*) fsimc->Get("T");
 	}
 	cout << " finish setup DelCut 2d" << endl;
 	for  (Int_t nc=0;nc<NumFoil;nc++) {
-	  hYsDelta[nc] = new TH2F(Form("hYsDelta_Foil_%d",nc),Form("Run %d Foil %4.1f; Ys ; Delta",nrun,ztar_foil[nc]),100,-12,12,50,-10.,10.);
-	HList.Add(hYsDelta[nc]);
-	hXsDelta[nc] = new TH2F(Form("hXsDelta_Foil_%d",nc),Form("Run %d Foil %4.1f; Xs ; Delta",nrun,ztar_foil[nc]),100,-15,15,50,-10.,10.);
-	HList.Add(hXsDelta[nc]);
-	  hYpFpYFp[nc] = new TH2F(Form("hYpFpYFp_%d",nc),Form("Run %d Foil %4.1f; Ypfp ; Yfp",nrun,ztar_foil[nc]),100,-.03,.03,100,-35.,35.);
-	HList.Add(hYpFpYFp[nc]);
-	  hXpFpXFp[nc] = new TH2F(Form("hXpFpXFp_%d",nc),Form("MC Run %d Foil %4.1f; Xpfp ; Xfp",nrun,ztar_foil[nc]),100,-.1,.1,100,-50.,50.);
-	HList.Add(hXpFpXFp[nc]);
-	  hXFpYFp[nc] = new TH2F(Form("hXFpYFp_%d",nc),Form("MC Run %d Foil %4.1f; Yfp ; Xfp",nrun,ztar_foil[nc]),100,-40.,40,100,-50.,50.);
-	HList.Add(hXFpYFp[nc]);
-	for  (Int_t nd=0;nd<ndelcut;nd++) {
-	 hYsXs_DelCut[nc][nd]  = new TH2F(Form("hYsXs_Foil_%d_DelCut_%d",nc,nd),Form("Run %d Foil %4.1f DelCut %3.1f; Ys ; Xs",nrun,ztar_foil[nc],(delcut[nd+1]+delcut[nd])/2),50,-7,7,100,-12.5,12.5);
-	HList.Add(hYsXs_DelCut[nc][nd]);
-	for  (Int_t ny=0;ny<9;ny++) {
-	  hYsXs_DelCut_YpYfpCut[nc][nd][ny]  = new TH2F(Form("hYsXs_Foil_%d_DelCut_%d_FpCut_%d",nc,nd,ny),Form("Run %d Foil %d DelCut %3.1f Ys=%d; Ys ; Xs",nrun,nc,(delcut[nd+1]+delcut[nd])/2,ny),100,-7,7,100,-12.5,12.5);
-	HList.Add(hYsXs_DelCut_YpYfpCut[nc][nd][ny]);
-	  hYsXs_DelCut_XpXfpCut[nc][nd][ny]  = new TH2F(Form("hYsXs_Foil_%d_DelCut_%d_XFpCut_%d",nc,nd,ny),Form("Run %d Foil %d DelCut %3.1f Xs=%d; Ys ; Xs",nrun,nc,(delcut[nd+1]+delcut[nd])/2,ny),100,-7,7,100,-12.5,12.5);
-	HList.Add(hYsXs_DelCut_XpXfpCut[nc][nd][ny]);
-	  hXs_DelCut_YpYfpCut[nc][nd][ny]  = new TH1F(Form("hXs_Foil_%d_DelCut_%d_FpCut_%d",nc,nd,ny),Form("Run %d Foil %d DelCut %3.1f Ys=%d; Xs",nrun,nc,(delcut[nd+1]+delcut[nd])/2,ny),100,-12.5,12.5);
-	HList.Add(hXs_DelCut_YpYfpCut[nc][nd][ny]);
-	}
-	 hYpFpYFp_DelCut[nc][nd]  = new TH2F(Form("hYpFpYFp_%d_DelCut_%d",nc,nd),Form("Run %d Foil %4.1f DelCut %3.1f; Ypfp ; Yfp",nrun,ztar_foil[nc],(delcut[nd+1]+delcut[nd])/2),75,-.03,.03,150,-35.,35.);
-	HList.Add(hYpFpYFp_DelCut[nc][nd]);
-	hXpFpXFp_DelCut[nc][nd]= new TH2F(Form("hXpFpXFp_%d_DelCut_%d",nc,nd),Form("Run %d Foil %4.1f DelCut %3.1f; Xpfp ; Xfp",nrun,ztar_foil[nc],(delcut[nd+1]+delcut[nd])/2),150,-.07,.07,150,-50.,50.);
-	HList.Add(hXpFpXFp_DelCut[nc][nd]);
-	}
-        }	  
+		hYsDelta[nc] = new TH2F(Form("hYsDelta_Foil_%d",nc),Form("Run %d Foil %4.1f; Ys ; Delta",nrun,ztar_foil[nc]),100,-12,12,50,-10.,10.);
+		HList.Add(hYsDelta[nc]);
+		
+		hXsDelta[nc] = new TH2F(Form("hXsDelta_Foil_%d",nc),Form("Run %d Foil %4.1f; Xs ; Delta",nrun,ztar_foil[nc]),100,-15,15,50,-10.,10.);
+		HList.Add(hXsDelta[nc]);
+		
+		hYpFpYFp[nc] = new TH2F(Form("hYpFpYFp_%d",nc),Form("Run %d Foil %4.1f; Ypfp ; Yfp",nrun,ztar_foil[nc]),100,-.03,.03,100,-35.,35.);
+		HList.Add(hYpFpYFp[nc]);
+		
+		hXpFpXFp[nc] = new TH2F(Form("hXpFpXFp_%d",nc),Form("MC Run %d Foil %4.1f; Xpfp ; Xfp",nrun,ztar_foil[nc]),100,-.1,.1,100,-50.,50.);
+		HList.Add(hXpFpXFp[nc]);
+		
+		hXFpYFp[nc] = new TH2F(Form("hXFpYFp_%d",nc),Form("MC Run %d Foil %4.1f; Yfp ; Xfp",nrun,ztar_foil[nc]),100,-40.,40,100,-50.,50.);
+		HList.Add(hXFpYFp[nc]);
+		
+		for  (Int_t nd=0;nd<ndelcut;nd++) {
+			hYsXs_DelCut[nc][nd]  = new TH2F(Form("hYsXs_Foil_%d_DelCut_%d",nc,nd),Form("Run %d Foil %4.1f DelCut %3.1f; Ys ; Xs",nrun,ztar_foil[nc],(delcut[nd+1]+delcut[nd])/2),50,-7,7,100,-12.5,12.5);
+			HList.Add(hYsXs_DelCut[nc][nd]);
+			for  (Int_t ny=0;ny<9;ny++) {
+				hYsXs_DelCut_YpYfpCut[nc][nd][ny]  = new TH2F(Form("hYsXs_Foil_%d_DelCut_%d_FpCut_%d",nc,nd,ny),Form("Run %d Foil %d DelCut %3.1f Ys=%d; Ys ; Xs",nrun,nc,(delcut[nd+1]+delcut[nd])/2,ny),100,-7,7,100,-12.5,12.5);
+				HList.Add(hYsXs_DelCut_YpYfpCut[nc][nd][ny]);
+				
+				hYsXs_DelCut_XpXfpCut[nc][nd][ny]  = new TH2F(Form("hYsXs_Foil_%d_DelCut_%d_XFpCut_%d",nc,nd,ny),Form("Run %d Foil %d DelCut %3.1f Xs=%d; Ys ; Xs",nrun,nc,(delcut[nd+1]+delcut[nd])/2,ny),100,-7,7,100,-12.5,12.5);
+				HList.Add(hYsXs_DelCut_XpXfpCut[nc][nd][ny]);
+				
+				hXs_DelCut_YpYfpCut[nc][nd][ny]  = new TH1F(Form("hXs_Foil_%d_DelCut_%d_FpCut_%d",nc,nd,ny),Form("Run %d Foil %d DelCut %3.1f Ys=%d; Xs",nrun,nc,(delcut[nd+1]+delcut[nd])/2,ny),100,-12.5,12.5);
+				HList.Add(hXs_DelCut_YpYfpCut[nc][nd][ny]);
+			}
+			
+			hYpFpYFp_DelCut[nc][nd]  = new TH2F(Form("hYpFpYFp_%d_DelCut_%d",nc,nd),Form("Run %d Foil %4.1f DelCut %3.1f; Ypfp ; Yfp",nrun,ztar_foil[nc],(delcut[nd+1]+delcut[nd])/2),75,-.03,.03,150,-35.,35.);
+			HList.Add(hYpFpYFp_DelCut[nc][nd]);
+			
+			hXpFpXFp_DelCut[nc][nd]= new TH2F(Form("hXpFpXFp_%d_DelCut_%d",nc,nd),Form("Run %d Foil %4.1f DelCut %3.1f; Xpfp ; Xfp",nrun,ztar_foil[nc],(delcut[nd+1]+delcut[nd])/2),150,-.07,.07,150,-50.,50.);
+			HList.Add(hXpFpXFp_DelCut[nc][nd]);
+		}
+    }	  
 	//
 // loop over entries
 Long64_t nentries = tsimc->GetEntries();
@@ -334,6 +353,8 @@ Long64_t nentries = tsimc->GetEntries();
                 if (i%50000==0) cout << " Entry = " << i << endl;
 		hxbpm_tar->Fill(xbpm_tar);
 		hybpm_tar->Fill(ybpm_tar);
+		hZtarFrXa->Fill(fr_xa,reactz);
+		hZtarFrYa->Fill(fr_ya,reactz);
 		if (sumnpe > 2.) hetot->Fill(etracknorm);
 		if (etracknorm>.8) hngsum->Fill(sumnpe);
 		if (sumnpe > 2. && delta>-10 && delta<10) {
@@ -372,7 +393,7 @@ Long64_t nentries = tsimc->GetEntries();
 			       }
 			       // temporary to clean up
 			       if (f_ny !=-1) hXpFpXFp_DelCut[nc][nd]->Fill(xpfp,xfp);
-			       hXpFphXFp_DelCut[nc][nd]->Fill(xpfp,xfp);
+			       hXpFpXFp_DelCut[nc][nd]->Fill(xpfp,xfp);
                                for  (UInt_t nx=0;nx<9;nx++) {
 			        if (f_ny !=-1 && CutXpFpXFpFlag && xpfp_xfp_cut[nc][nd][nx] && xpfp_xfp_cut[nc][nd][nx]->IsInside(xpfp,xfp)) {
 				hYsXs_DelCut_XpXfpCut[nc][nd][nx]->Fill(ysieve,xsieve);
