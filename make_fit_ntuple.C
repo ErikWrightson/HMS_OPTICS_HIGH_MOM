@@ -95,7 +95,8 @@ gStyle->SetPalette(1,0);
   } else {
     cout << " No file = " << OpticsFile << endl;    
   }
-  cout << RunNum << " " << OpticsID << " " << CentAngle << " " << NumFoil << " " << SieveFlag << " ymis = " << ymis<< endl;
+  Double_t     y_mis = 0.1*(0.52-0.012*CentAngle+0.002*CentAngle*CentAngle); // cm
+  cout << RunNum << " " << OpticsID << " " << CentAngle << " " << NumFoil << " " << SieveFlag << " y_mis = " << y_mis<< endl;
   if (NumFoil==0) return;
   for (Int_t nf=0;nf<NumFoil;nf++) {
     cout << nf << " foil = " << ztar_foil[nf] << endl;
@@ -113,7 +114,9 @@ gStyle->SetPalette(1,0);
  //
    TString inputroot;
    TString outputroot;
-   inputroot=Form("ROOTfiles/hms_replay_matrixopt_%s_%d.root",OpticsID.Data(),FileID);
+   //inputroot=Form("ROOTfiles/hms_replay_matrixopt_%s_%d.root",OpticsID.Data(),FileID);
+   inputroot=Form("./ROOTfiles/Analysis/50k/hms_coin_replay_production_%d_-1.root",RunNum);
+   
    outputroot= Form("hist/Optics_%s_%d_fit_tree.root",OpticsID.Data(),FileID);
   //
 	TH1F *hxbpm_tar = new TH1F("hxbpm_tar",Form("Run %d ; Xbpm_tar ; Counts",nrun),100,-2.,2.);
@@ -300,9 +303,9 @@ Double_t	ybeam = hybpm_tar->GetMean();
 		}
 		 }
 		if (nf_found !=-1 && nd_found!=-1 && ny_found!=-1 && nx_found!=-1) {
-		  Double_t ytar_cent = ztar_foil[nf_found]*TMath::Sin(CentAngle) + xbeam*cos(CentAngle)-ymis;
+		  Double_t ytar_cent = ztar_foil[nf_found]*TMath::Sin(CentAngle) + xbeam*cos(CentAngle)-y_mis;
 	yptarT = (ys_cent[ny_found]-ytar_cent)/(zdis_sieve-ztar_foil[nf_found]*TMath::Cos(CentAngle));
-	ytarT = +ztar_foil[nf_found]*(TMath::Sin(CentAngle)-yptarT*TMath::Cos(CentAngle)) +xbeam*(TMath::Cos(CentAngle)+yptarT*TMath::Sin(CentAngle))- ymis;
+	ytarT = +ztar_foil[nf_found]*(TMath::Sin(CentAngle)-yptarT*TMath::Cos(CentAngle)) +xbeam*(TMath::Cos(CentAngle)+yptarT*TMath::Sin(CentAngle))- y_mis;
 	        xptarT = (xs_cent[nx_found])/(zdis_sieve-ztar_foil[nf_found]*TMath::Cos(CentAngle));
 		ysieveT=ys_cent[ny_found];
 		xsieveT=xs_cent[nx_found];
