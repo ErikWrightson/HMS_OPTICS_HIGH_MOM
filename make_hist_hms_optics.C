@@ -262,9 +262,9 @@ TTree *tsimc = (TTree*) fsimc->Get("T");
 	HList.Add(hYtarYptar);
 	TH2F *hZtarDelta = new TH2F("hZtarDelta",Form("Run %d ; Ztar ; Delta",nrun),100,-35.,25.,100,-10.,10.);
 	HList.Add(hZtarDelta);
-	TH2F *hZtarFrXa = new TH2F("hZtarFrXa",Form("Run %d; Ztar; fr_xa",nrun),100,-0.15,0.15,100,-11,11);
+	TH2F *hZtarFrXa = new TH2F("hZtarFrXa",Form("Run %d; fr_xa;Ztar",nrun),100,-0.15,0.15,100,-11,11);
 	HList.Add(hZtarFrXa);
-	TH2F *hZtarFrYa = new TH2F("hZtarFrYa",Form("Run %d; Ztar; fr_ya",nrun),100,-0.15,0.15,100,-11,11);
+	TH2F *hZtarFrYa = new TH2F("hZtarFrYa",Form("Run %d; fr_ya;Ztar;",nrun),100,-0.15,0.15,100,-11,11);
 	HList.Add(hZtarFrYa);
 	//
 	vector<TH2F*> hYsDelta;
